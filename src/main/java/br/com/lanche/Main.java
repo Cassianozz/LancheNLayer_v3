@@ -122,6 +122,16 @@ public class Main {
         double total = lancheFacade.calcularTotal(lanche, quantidade);
         System.out.println("Total do lanche: " + total);
     }
+    public static void excluirImagemDaPasta() throws IOException {
+        System.out.println("Informe o ID da imagem que será excluída: ");
+        int id = scanner.nextInt();
+        scanner.nextLine(); // limpa buffer
+
+            lancheFacade.excluir(id);
+            System.out.println("Produto e imagem excluídos com sucesso!");
+
+    }
+
 
 
     public static void iniciarSistema() throws IOException {
@@ -148,6 +158,9 @@ public class Main {
                 case 5:
                     venderLanche();
                     break;
+
+                case 6:
+                    excluirImagemDaPasta();
                 default:
                     break;
             }
