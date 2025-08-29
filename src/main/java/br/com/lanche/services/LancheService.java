@@ -2,13 +2,13 @@ package br.com.lanche.services;
 
 import br.com.lanche.interfaces.LancheRepository;
 import br.com.lanche.models.Lanche;
-import br.com.lanche.repositories.LancheRepositoryImpl;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.stream.Stream;
 
 public class LancheService {
     private static final String PASTA_IMAGENS = "produto_imagens/";
@@ -23,11 +23,9 @@ public class LancheService {
 
         Files.createDirectories(Paths.get(PASTA_IMAGENS));
 
-        String nomeArquivo = Paths.get(caminhoImagem).getFileName().toString();
+        Path destino = Paths.get(PASTA_IMAGENS + lanche.getId() + ".png");
 
-        Path destino = Paths.get(PASTA_IMAGENS + nomeArquivo);
-
-        Files.move(Paths.get(caminhoImagem), destino, StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(Paths.get(caminhoImagem), destino, StandardCopyOption.REPLACE_EXISTING);
 
         return destino.toString();
     }
@@ -50,17 +48,18 @@ public class LancheService {
         return destino.toString();
     }
     public void excluirImagem(int id) throws IOException {
-        Lanche lanche = repository.buscarPorId(id);
+        Path caminhoImagem = Paths.get(PASTA_IMAGENS);
+        try(Stream<Path> imagens = Files.list(caminhoImagem)){
+            String caminhoEsperado = id + ".png";
 
-        if (lanche == null) {
-            throw new IOException("Lanche com ID " + id + " não encontrado.");
-        }
-
-        Path caminho = Paths.get(lanche.getCaminhoImagem());
-        if (Files.exists(caminho) && !Files.isDirectory(caminho)) {
-            Files.delete(caminho);
-        } else {
-            throw new IOException("Arquivo de imagem não encontrado: " + caminho);
+            imagens.filter(imagem -> imagem.getFileName().toString().equals(caminhoEsperado))
+                    .forEach(imagem -> {
+                        try {
+                            Files.deleteIfExists(imagem);
+                        }catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
         }
     }
     }

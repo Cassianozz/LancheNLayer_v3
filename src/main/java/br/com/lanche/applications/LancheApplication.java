@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 public class LancheApplication {
@@ -20,8 +21,10 @@ public class LancheApplication {
     }
 
     public List<Lanche> buscarTodos() throws IOException {
-        return this.lancheRepository.buscarTodos();
+        List<Lanche> lanches = this.lancheRepository.buscarTodos();
+        return (lanches != null) ? lanches : new ArrayList<>();
     }
+
 
     public Lanche buscarPorId(int id) throws IOException {
         return this.lancheRepository.buscarPorId(id);
@@ -33,8 +36,8 @@ public class LancheApplication {
     }
 
     public void excluir(int id) throws IOException {
-        this.lancheRepository.excluir(id);
         this.lancheService.excluirImagem(id);
+        this.lancheRepository.excluir(id);
     }
 
     public void atualizar(int id, Lanche lanche) throws IOException {

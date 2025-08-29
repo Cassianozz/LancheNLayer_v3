@@ -23,7 +23,7 @@ public class Main {
         lancheRepositoryImpl = new LancheRepositoryFirebase();
         lancheService = new LancheService(lancheRepositoryImpl);
         lancheApplication = new LancheApplication(lancheRepositoryImpl, lancheService);
-        lancheFacade = new LancheFacade(lancheApplication, lancheRepositoryImpl);
+        lancheFacade = new LancheFacade(lancheApplication);
         scanner = new Scanner(System.in);
     }
 
@@ -33,6 +33,7 @@ public class Main {
         System.out.println("3 - Editar Produto");
         System.out.println("4 - Excluir Produto");
         System.out.println("5 - Vender");
+        System.out.println("6 - Excluir Imagem pelo id (Ex:11)");
         System.out.println("0 - Sair do sistema");
     }
 
@@ -105,7 +106,7 @@ public class Main {
         System.out.println("ID do produto que será excluído: ");
         int id = scanner.nextInt();
 
-        lancheFacade.excluir(id);
+        lancheApplication.excluir(id);
     }
 
     public static void venderLanche() throws IOException {
@@ -125,14 +126,12 @@ public class Main {
     public static void excluirImagemDaPasta() throws IOException {
         System.out.println("Informe o ID da imagem que será excluída: ");
         int id = scanner.nextInt();
-        scanner.nextLine(); // limpa buffer
+        scanner.nextLine();
 
             lancheFacade.excluir(id);
             System.out.println("Produto e imagem excluídos com sucesso!");
 
     }
-
-
 
     public static void iniciarSistema() throws IOException {
         int opcaoMenu = -1;

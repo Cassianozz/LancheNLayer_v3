@@ -9,11 +9,9 @@ import java.util.List;
 
 public class LancheFacade {
     private final LancheApplication lancheApplication;
-    private final LancheRepository lancheRepository;
 
-    public LancheFacade(LancheApplication lancheApplication, LancheRepository lancheRepository) {
+    public LancheFacade(LancheApplication lancheApplication) {
         this.lancheApplication = lancheApplication;
-        this.lancheRepository = lancheRepository;
 
     }
 
@@ -30,10 +28,9 @@ public class LancheFacade {
     }
 
     public void excluir(int id) throws IOException {
-        this.lancheRepository.excluir(id);
         this.lancheApplication.excluir(id);
-    }
 
+    }
 
     public void atualizar(int id, Lanche lanche) throws IOException {
         this.lancheApplication.atualizar(id, lanche);
