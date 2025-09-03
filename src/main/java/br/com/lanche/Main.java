@@ -124,7 +124,7 @@ public class Main {
         System.out.println("Total do lanche: " + total);
     }
     public static void excluirImagemDaPasta() throws IOException {
-        System.out.println("Informe o ID da imagem que será excluída: ");
+        System.out.println("Informe o ID da imagem que será excluída (Deve ter o numero do id na imagem, ex: arroz11.png): ");
         int id = scanner.nextInt();
         scanner.nextLine();
 

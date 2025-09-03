@@ -18,17 +18,23 @@ public class LancheService {
         this.repository = repository;
     }
 
-    public String salvarImagem(Lanche lanche) throws IOException, IOException {
+    public String salvarImagem(Lanche lanche) throws IOException {
         String caminhoImagem = lanche.getCaminhoImagem();
+        Path origem = Paths.get(caminhoImagem);
+
+        if (!Files.exists(origem) || Files.isDirectory(origem)) {
+            throw new IOException("Arquivo de imagem inválido: " + caminhoImagem);
+        }
 
         Files.createDirectories(Paths.get(PASTA_IMAGENS));
 
-        Path destino = Paths.get(PASTA_IMAGENS + lanche.getId() + ".png");
+        Path destino = Paths.get(PASTA_IMAGENS, origem.getFileName().toString());
 
-        Files.copy(Paths.get(caminhoImagem), destino, StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(origem, destino, StandardCopyOption.REPLACE_EXISTING);
 
         return destino.toString();
     }
+
     public String moverImagem(Lanche lanche, String novaPastaDestino) throws IOException {
         Path origem = Paths.get(lanche.getCaminhoImagem()); // precisa ser um arquivo!
         if (!Files.exists(origem) || Files.isDirectory(origem)) {
@@ -48,19 +54,30 @@ public class LancheService {
         return destino.toString();
     }
     public void excluirImagem(int id) throws IOException {
-        Path caminhoImagem = Paths.get(PASTA_IMAGENS);
-        try(Stream<Path> imagens = Files.list(caminhoImagem)){
-            String caminhoEsperado = id + ".png";
+        Path pastaImagens = Paths.get(PASTA_IMAGENS);
 
-            imagens.filter(imagem -> imagem.getFileName().toString().equals(caminhoEsperado))
-                    .forEach(imagem -> {
+        if (!Files.exists(pastaImagens) || !Files.isDirectory(pastaImagens)) {
+            throw new IOException("Pasta de imagens não encontrada.");
+        }
+
+        try (Stream<Path> imagens = Files.list(pastaImagens)) {
+            boolean encontrado = imagens
+                    .filter(Files::isRegularFile)
+                    .filter(imagem -> imagem.getFileName().toString().contains(String.valueOf(id)))
+                    .map(imagem -> {
                         try {
-                            Files.deleteIfExists(imagem);
-                        }catch (Exception e) {
-                            throw new RuntimeException(e);
+                            Files.delete(imagem);
+                            return imagem;
+                        } catch (IOException e) {
+                            throw new RuntimeException("Erro ao excluir a imagem: " + imagem, e);
                         }
-                    });
+                    })
+                    .findFirst()
+                    .isPresent();
+
+            if (!encontrado) {
+                throw new IOException("Nenhuma imagem encontrada para o ID: " + id);
+            }
         }
     }
-    }
-
+}

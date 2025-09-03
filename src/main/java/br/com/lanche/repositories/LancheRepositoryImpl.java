@@ -13,12 +13,14 @@ public class LancheRepositoryImpl implements LancheRepository {
         return lanches;
     }
 
+    @Override
     public Lanche buscarPorId(int id) {
-        return lanches
-                .stream()
-                .filter(l -> l.getId() == id)
-                .findFirst()
-                .get();
+        for (Lanche lanche : lanches) {
+            if (lanche.getId() == id) { // comparar primitivo
+                return lanche;
+            }
+        }
+        return null; // não encontrado
     }
 
     public void adicionar(Lanche lanche) {
